@@ -160,7 +160,7 @@ jobs:
       # the cache.
       ###
       - name: Cache ~/.ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         # This is repeated in an explicit save always step below
         # because normally it won't save anything if there's a cache hit!
         # Which is silly, because things in the cache might have (will have)
@@ -172,7 +172,7 @@ jobs:
       - name: Cache config.cache
         # Store the configure caches. Having a cache can speed up c-ares
         # configure from 2-3 minutes to 20 seconds.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps/*/config.cache
           # XXX: This should probably include a hash of each configure
@@ -253,13 +253,13 @@ jobs:
           ls -l dist
           twine check dist/*whl
       - name: Cache ~/.ccache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         if: always()
         with:
           path: ~/.ccache/**
           key: ${{ runner.os }}-ccache2-${{ matrix.python-version }}
       - name: Upload gevent wheel
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: gevent-${{ runner.os }}-${{ matrix.python-version }}.whl
           path: dist/*whl
@@ -418,7 +418,7 @@ jobs:
           mkdir -p $HOME/.ccache
 
       - name: Cache ~/.ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.ccache/**
           key: ${{ runner.os }}-ccache2_embed-${{ matrix.python-version }}
@@ -426,7 +426,7 @@ jobs:
       - name: Cache config.cache
         # Store the configure caches. Having a cache can speed up c-ares
         # configure from 2-3 minutes to 20 seconds.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: deps/*/config.cache
           # XXX: This should probably include a hash of each configure
@@ -520,7 +520,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Cache ~/.ccache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.ccache/**
           key: ${{ runner.os }}-ccache_${{ matrix.config[2] }}-${{ matrix.config[0] }}
@@ -544,7 +544,7 @@ jobs:
           skip_existing: true
           packages_dir: wheelhouse/
       - name: Upload gevent wheels
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           path: wheelhouse/*whl
           name: ${{ matrix.image }}_wheels.zip
