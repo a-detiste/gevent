@@ -88,11 +88,11 @@ jobs:
           # and how much is us. Probably a lot of greenlet.
           # https://github.com/gevent/gevent/actions/runs/19936104137/job/57161263886
           # - "3.14t"
-          # - "3.12"
-          # - "pypy-3.11-v7.3.20"
-          # - '3.10.18'
-          # - '3.11.13'
-          # - "3.13.5"
+          - "3.12"
+          - "pypy-3.11-v7.3.20"
+          - '3.10.18'
+          - '3.11.13'
+          - "3.13.5"
         # XXX: August 2025: ``macos-latest`` switched from macOS 14 to macOS 15.5;
         # at that time, we started getting timeouts performing DNS lookups. I can't
         # replicate those locally on my own macOS 15 machine.
@@ -292,7 +292,6 @@ jobs:
 
       - name: "Tests: Basic"
         run: |
-          python -m gevent.testing.monkey_test test_threading.py -v
           python -m gevent.tests --second-chance $G_USE_COV
       # For the CPython interpreters, unless we have reason to expect
       # different behaviour across the versions (e.g., as measured by coverage)
