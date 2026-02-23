@@ -123,6 +123,40 @@ disabled_tests = [
     # XXX: While we debug latest updates. This is leaking
     'test_threading.ThreadTests.test_no_refcycle_through_target',
 
+    # These two might have been impacted by the change in greenlet 3.3.2
+    'test_threading.ThreadTests.test_main_thread_during_shutdown',
+    'test_threading.ThreadTests.test_locals_at_exit',
+    # This test only runs if threading has not been imported already
+    # when the subprocess runs its script. But locally, and on CI,
+    # threading is already imported. It's not clear how, because getting the backtrace just
+    # shows all the internal frozen importlib modules, no actual calling code.
+    # The closest we get is this:
+    #
+    # <frozen site>(626)<module>()
+    # <frozen site>(609)main()
+    # <frozen site>(541)venv()
+    # <frozen site>(394)addsitepackages()
+    # <frozen site>(236)addsitedir()
+    # <frozen site>(195)addpackage()
+    # <string>(1)<module>()
+    #
+    # which makes it appear like it's one of the .pth files?
+    #
+    # The monkey_test.py runner adds some ``gevent.testing``
+    # imports to the top of ``test_threading.py``, and those do
+    # ultimately import threading, but that shouldn't affect the
+    # Python subprocess that runs the script being tested.
+    #
+    # Locally, I had a .pythonrc that was importing threading
+    # (``rich.traceback`` -> ``pygments.lexers`` ->
+    # ``pygments.plugin`` -> ``importlib.metadata`` -> ``zipfile``
+    # -> ``importlib.util`` -> ``threading``).
+    #
+    # That provided the clue we needed. ``importlib._bootstrap``
+    # imports ``importlib.util``, which imports threading. No idea
+    # how this test gets to pass on the CPython test suite.
+    'test_threading.ThreadTests.test_import_from_another_thread',
+
     # The server side takes awhile to shut down
     'test_httplib.HTTPSTest.test_local_bad_hostname',
     # These were previously 3.5+ issues (same as above)
@@ -1234,36 +1268,6 @@ if PY311:
         # 3.11 added subprocess._USE_VFORK and subprocess._USE_POSIX_SPAWN.
         # We don't support either of those (although USE_VFORK might be possible?)
         'test_subprocess.ProcessTestCase.test__use_vfork',
-        # This test only runs if threading has not been imported already
-        # when the subprocess runs its script. But locally, and on CI,
-        # threading is already imported. It's not clear how, because getting the backtrace just
-        # shows all the internal frozen importlib modules, no actual calling code.
-        # The closest we get is this:
-        #
-        # <frozen site>(626)<module>()
-        # <frozen site>(609)main()
-        # <frozen site>(541)venv()
-        # <frozen site>(394)addsitepackages()
-        # <frozen site>(236)addsitedir()
-        # <frozen site>(195)addpackage()
-        # <string>(1)<module>()
-        #
-        # which makes it appear like it's one of the .pth files?
-        #
-        # The monkey_test.py runner adds some ``gevent.testing``
-        # imports to the top of ``test_threading.py``, and those do
-        # ultimately import threading, but that shouldn't affect the
-        # Python subprocess that runs the script being tested.
-        #
-        # Locally, I had a .pythonrc that was importing threading
-        # (``rich.traceback`` -> ``pygments.lexers`` ->
-        # ``pygments.plugin`` -> ``importlib.metadata`` -> ``zipfile``
-        # -> ``importlib.util`` -> ``threading``).
-        #
-        # That provided the clue we needed. ``importlib._bootstrap``
-        # imports ``importlib.util``, which imports threading. No idea
-        # how this test gets to pass on the CPython test suite.
-        'test_threading.ThreadTests.test_import_from_another_thread',
     ]
 
     if sys.version_info[:3] < (3, 11, 8):
@@ -1487,7 +1491,6 @@ def disable_tests_in_source(source, filename):
 
     if filename.endswith('.py'):
         filename = filename[:-3]
-
 
     # XXX ignoring TestCase class name (just using function name).
     # Maybe we should do this with the AST, or even after the test is

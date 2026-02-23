@@ -419,7 +419,11 @@ def run_setup(ext_modules):
                 # We don't run coverage on Windows, and pypy can't build it there
                 # anyway (coveralls -> cryptopgraphy -> openssl).
                 # coverage 5 needs coveralls 1.11
-                'coverage >= 5.0 ; sys_platform != "win32"',
+                # Between December 4, 2025 and Feb 23 2026, test_threading.py
+                # started timing out on Python 3.12+ (3.10 and 3.11 were fine),
+                # and getting several failures.
+                # It seems that coverage 7.13 broke things for us.
+                'coverage >= 5.0,<7.13 ; sys_platform != "win32"',
 
                 # leak checks. previously we had a hand-rolled version.
                 'objgraph',
