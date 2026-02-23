@@ -1492,7 +1492,6 @@ def disable_tests_in_source(source, filename):
     if filename.endswith('.py'):
         filename = filename[:-3]
 
-
     # XXX ignoring TestCase class name (just using function name).
     # Maybe we should do this with the AST, or even after the test is
     # imported.
