@@ -422,7 +422,7 @@ def run_setup(ext_modules):
                 # Between December 4, 2025 and Feb 23 2026, test_threading.py
                 # started timing out on Python 3.12+ (3.10 and 3.11 were fine).
                 # Could it me the coverage version?
-                'coverage >= 5.0,<7.13 ; sys_platform != "win32"',
+                'coverage >= 5.0,<7.13.1 ; sys_platform != "win32"',
 
                 # leak checks. previously we had a hand-rolled version.
                 'objgraph',
