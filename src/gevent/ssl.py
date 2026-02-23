@@ -859,7 +859,7 @@ def _SSLErrorReadTimeout():
     return _socket_timeout('The read operation timed out')
 def _SSLErrorWriteTimeout():
     return _socket_timeout('The write operation timed out')
-def _SSLErrorHandshakeTimeout(e=_socket_timeout('The handshake operation timed out')):
+def _SSLErrorHandshakeTimeout():
     return _socket_timeout('The handshake operation timed out')
 
 
