@@ -123,6 +123,10 @@ disabled_tests = [
     # XXX: While we debug latest updates. This is leaking
     'test_threading.ThreadTests.test_no_refcycle_through_target',
 
+    # These two might have been impacted by the change in greenlet 3.3.2
+    'test_threading.ThreadTests.test_main_thread_during_shutdown',
+    'test_threading.ThreadTests.test_locals_at_exit'
+
     # The server side takes awhile to shut down
     'test_httplib.HTTPSTest.test_local_bad_hostname',
     # These were previously 3.5+ issues (same as above)
