@@ -18,7 +18,6 @@ import gevent.socket as gevent_socket
 import gevent.testing as greentest
 
 from gevent.testing import util
-from gevent.testing.six import xrange
 from gevent.testing import flaky
 from gevent.testing.skipping import skipWithoutExternalNetwork
 
@@ -794,7 +793,7 @@ class TestInterrupted_gethostbyname(gevent.testing.timing.AbstractGenericWaitTes
 
     def wait(self, timeout):
         with gevent.Timeout(timeout, False):
-            for index in xrange(1000000):
+            for index in range(1000000):
                 try:
                     gevent_socket.gethostbyname('www.x%s.com' % index)
                 except socket.error:
